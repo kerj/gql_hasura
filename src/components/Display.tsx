@@ -1,21 +1,26 @@
-import React from 'react'
+import axios from 'axios';
+import { lazy, Suspense } from 'react'
 import '../App.css';
-import { useGetData } from '../hooks/useGetData';
-import { CallbackButton } from './CallbackButton';
+import { DataProvider } from '../Context/DataContext';
+const LazyTable = lazy(() => import('./Table'))
 
-
+export type ContextType = {
+  data: {
+    data: {
+      customers: { email_address: string, first_name: string, last_name: string }[]
+    }
+  }
+}
 
 export const Display = ({ url }: { url: string }) => {
-  const results = useGetData(url);
-  const headers: any[] = results ? Object.keys(results[0]) : [];
   const onAdd = () => {
     const url = 'http://localhost:3000/addcustomer'
     const options = {
-      method: "POST",
+      method: "post",
       headers: {
         'Content-type': 'application/json'
       },
-      body: JSON.stringify({
+      data: JSON.stringify({
         customerId: "this-is-a-customerId",
         email: "test@test.com",
         first_name: "Lebron",
@@ -23,52 +28,68 @@ export const Display = ({ url }: { url: string }) => {
       })
     }
 
-    fetch(url, options)
+    axios(url, options)
   }
 
   const onRemove = () => {
     const url = 'http://localhost:3000/removecustomer'
     const options = {
-      method: "POST",
+      method: "post",
       headers: {
         'Content-type': 'application/json'
       },
-      body: JSON.stringify({
+      data: JSON.stringify({
         customerId: "this-is-a-customerId",
       })
     }
 
-    fetch(url, options)
+    axios(url, options)
   }
 
   return (
     <>
-      <CallbackButton callback={onAdd} text="Add test Customer" />
-      <CallbackButton callback={onRemove} text="remove test Customer" />
-      <div className='tableContainer' style={{ color: 'black' }}>
-        {
-          <table className='table'>
-            <thead>
-              <tr className='tr'>
-                {headers.map(header => (<th>{header}</th>))}
-              </tr>
-            </thead>
-            <tbody>
-              {
-                (results || []).map((row, index) => (
-                  <tr key={index}>
-                    {headers.map((header, ind) => (
-                      <td key={ind} className="td">
-                        {row[header]}
-                      </td>
-                    ))}
-                  </tr>
-                ))
+      <DataProvider<ContextType> requestMetas={{
+        url: "http://localhost:8080/v1/graphql", options: {
+          method: "post",
+          data: JSON.stringify({
+            query: `
+              query GetCustomers {
+                customers(limit: 10) {
+                  email_address
+                  first_name
+                  last_name
+                }
               }
-            </tbody>
-          </table>
+            `,
+            operationName: "GetCustomers"
+          })
         }
-      </div>
+      }}>
+        <Suspense fallback={<>Loading...</>} >
+          <LazyTable />
+        </Suspense>
+      </DataProvider>
+      <DataProvider<ContextType> requestMetas={{
+        url: "http://localhost:8080/v1/graphql", options: {
+          method: "post",
+          data: JSON.stringify({
+            query: `
+              query GetCustomers {
+                customers(limit: 19) {
+                  email_address
+                  first_name
+                  last_name
+                }
+              }
+            `,
+            operationName: "GetCustomers"
+          })
+        }
+      }}>
+        <Suspense fallback={<>Loading...</>} >
+          <LazyTable />
+        </Suspense>
+      </DataProvider>
     </>
   )
 }
