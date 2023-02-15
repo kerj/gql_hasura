@@ -1,7 +1,8 @@
 import axios from 'axios';
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useContext, useState } from 'react'
 import '../App.css';
-import { DataProvider } from '../Context/DataContext';
+import { DataContext, DataProvider } from '../Context/DataContext';
+import { CallbackButton } from './CallbackButton';
 const LazyTable = lazy(() => import('./Table'))
 
 export type ContextType = {
@@ -12,84 +13,69 @@ export type ContextType = {
   }
 }
 
-export const Display = ({ url }: { url: string }) => {
+export const Display = () => {
+  const { setStale } = useContext(DataContext);
   const onAdd = () => {
-    const url = 'http://localhost:3000/addcustomer'
+    const url = "http://localhost:8080/v1/graphql"
     const options = {
       method: "post",
       headers: {
         'Content-type': 'application/json'
       },
       data: JSON.stringify({
-        customerId: "this-is-a-customerId",
-        email: "test@test.com",
-        first_name: "Lebron",
-        last_name: "James",
+        query: `
+          mutation addCustomer {
+            insert_customers(
+              objects: {
+                customer_id: "this-is-a-customerId",
+                email_address: "test@test.com",
+                last_name: "James",
+                first_name: "LeBron"
+              }
+            ) {
+              affected_rows
+            }
+          }
+        `,
+        operationName: "addCustomer"
       })
     }
 
-    axios(url, options)
+    axios(url, options).then(() => setStale())
   }
 
   const onRemove = () => {
-    const url = 'http://localhost:3000/removecustomer'
+    const url = "http://localhost:8080/v1/graphql"
     const options = {
       method: "post",
       headers: {
         'Content-type': 'application/json'
       },
       data: JSON.stringify({
-        customerId: "this-is-a-customerId",
+        query: `
+          mutation deleteCustomer {
+            delete_customers_by_pk(customer_id: "this-is-a-customerId") {
+              email_address
+              first_name
+              last_name
+            }
+          }
+        `,
+        operationName: "deleteCustomer",
       })
     }
 
-    axios(url, options)
+    axios(url, options).then(() => setStale())
   }
 
   return (
     <>
-      <DataProvider<ContextType> requestMetas={{
-        url: "http://localhost:8080/v1/graphql", options: {
-          method: "post",
-          data: JSON.stringify({
-            query: `
-              query GetCustomers {
-                customers(limit: 10) {
-                  email_address
-                  first_name
-                  last_name
-                }
-              }
-            `,
-            operationName: "GetCustomers"
-          })
-        }
-      }}>
-        <Suspense fallback={<>Loading...</>} >
-          <LazyTable />
-        </Suspense>
-      </DataProvider>
-      <DataProvider<ContextType> requestMetas={{
-        url: "http://localhost:8080/v1/graphql", options: {
-          method: "post",
-          data: JSON.stringify({
-            query: `
-              query GetCustomers {
-                customers(limit: 19) {
-                  email_address
-                  first_name
-                  last_name
-                }
-              }
-            `,
-            operationName: "GetCustomers"
-          })
-        }
-      }}>
-        <Suspense fallback={<>Loading...</>} >
-          <LazyTable />
-        </Suspense>
-      </DataProvider>
+      <CallbackButton callback={onAdd} text="Add"></CallbackButton>
+      <CallbackButton callback={onRemove} text="remove"></CallbackButton>
+      <Suspense fallback={<>Loading...</>} >
+        <LazyTable />
+      </Suspense>
+
     </>
   )
 }
