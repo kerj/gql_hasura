@@ -1,7 +1,6 @@
-import axios from 'axios';
-import { lazy, Suspense, useContext, useState } from 'react'
+import { lazy, Suspense } from 'react'
 import '../App.css';
-import { DataContext, DataProvider } from '../Context/DataContext';
+import { useCreateCustomerMutation, useDeleteCustomerByPkMutation } from '../generated/graphql';
 import { CallbackButton } from './CallbackButton';
 const LazyTable = lazy(() => import('./Table'))
 
@@ -14,58 +13,26 @@ export type ContextType = {
 }
 
 export const Display = () => {
-  const { setStale } = useContext(DataContext);
+  const [deleteCustomerByPkMutation] = useDeleteCustomerByPkMutation({
+    fetchPolicy: 'network-only',
+    
+  })
+  const [createCustomerMutation] = useCreateCustomerMutation({
+    fetchPolicy: "network-only",
+  })
   const onAdd = () => {
-    const url = "http://localhost:8080/v1/graphql"
-    const options = {
-      method: "post",
-      headers: {
-        'Content-type': 'application/json'
-      },
-      data: JSON.stringify({
-        query: `
-          mutation addCustomer {
-            insert_customers(
-              objects: {
-                customer_id: "this-is-a-customerId",
-                email_address: "test@test.com",
-                last_name: "James",
-                first_name: "LeBron"
-              }
-            ) {
-              affected_rows
-            }
-          }
-        `,
-        operationName: "addCustomer"
-      })
-    }
-
-    axios(url, options).then(() => setStale())
+    createCustomerMutation({
+      variables: {
+        customer_id: "this-is-a-customerId",
+        email_address: "test@test.com",
+        last_name: "James",
+        first_name: "LeBron"
+      }
+    })
   }
 
   const onRemove = () => {
-    const url = "http://localhost:8080/v1/graphql"
-    const options = {
-      method: "post",
-      headers: {
-        'Content-type': 'application/json'
-      },
-      data: JSON.stringify({
-        query: `
-          mutation deleteCustomer {
-            delete_customers_by_pk(customer_id: "this-is-a-customerId") {
-              email_address
-              first_name
-              last_name
-            }
-          }
-        `,
-        operationName: "deleteCustomer",
-      })
-    }
-
-    axios(url, options).then(() => setStale())
+    deleteCustomerByPkMutation({ variables: { customer_id: "this-is-a-customerId" } })
   }
 
   return (

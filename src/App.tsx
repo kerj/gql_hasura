@@ -1,29 +1,20 @@
-import { ContextType, Display } from "./components/Display";
-import { DataProvider } from "./Context/DataContext";
+
+import { ApolloProvider, ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
+import { Display } from "./components/Display";
+
+const client = new ApolloClient({
+  cache: new InMemoryCache(),
+  link: new HttpLink({
+    uri: "http://localhost:8080/v1/graphql"
+  })
+})
 
 function App() {
   return (
     <div className="App">
-      <DataProvider<ContextType> requestMetas={{
-        url: "http://localhost:8080/v1/graphql",
-        options: {
-          method: "post",
-          data: JSON.stringify({
-            query: `
-              query GetCustomers {
-                customers(limit: 19, where: {first_name: {_like: "Le%"}}) {
-                  email_address
-                  first_name
-                  last_name
-                }
-              }
-            `,
-            operationName: "GetCustomers"
-          })
-        }
-      }}>
-        <Display />
-      </DataProvider>
+      <ApolloProvider client={client}>
+          <Display />
+      </ApolloProvider>
     </div>
   );
 }

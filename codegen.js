@@ -7,10 +7,10 @@ module.exports = {
           "http://localhost:8080/v1/graphql": {},
         },
       ],
-    //   documents: ["./src/*.graphql"],
+      documents: ["./src/gql/*.graphql"],
       plugins: [
         "typescript",
-        // "typescript-operations",
+        "typescript-operations",
         "typescript-react-apollo",
       ],
       config: {

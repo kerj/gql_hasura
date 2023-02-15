@@ -1,8 +1,11 @@
+import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -2205,3 +2208,143 @@ export type Subscription_RootSold_Items_StreamArgs = {
   cursor: Array<InputMaybe<Sold_Items_Stream_Cursor_Input>>;
   where?: InputMaybe<Sold_Items_Bool_Exp>;
 };
+
+export type CreateCustomerMutationVariables = Exact<{
+  customer_id?: InputMaybe<Scalars['String']>;
+  email_address?: InputMaybe<Scalars['String']>;
+  last_name?: InputMaybe<Scalars['String']>;
+  first_name?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type CreateCustomerMutation = { __typename?: 'mutation_root', insert_customers_one?: { __typename?: 'customers', email_address?: string | null, first_name?: string | null, last_name?: string | null } | null };
+
+export type DeleteCustomerByPkMutationVariables = Exact<{
+  customer_id: Scalars['String'];
+}>;
+
+
+export type DeleteCustomerByPkMutation = { __typename?: 'mutation_root', delete_customers_by_pk?: { __typename?: 'customers', email_address?: string | null, first_name?: string | null, last_name?: string | null } | null };
+
+export type GetCustomersLikeNameQueryVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']>;
+  first_name_term?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type GetCustomersLikeNameQuery = { __typename?: 'query_root', customers: Array<{ __typename?: 'customers', email_address?: string | null, first_name?: string | null, last_name?: string | null }> };
+
+
+export const CreateCustomerDocument: any = gql`
+    mutation CreateCustomer($customer_id: String, $email_address: String, $last_name: String, $first_name: String) {
+  insert_customers_one(
+    object: {email_address: $email_address, customer_id: $customer_id, last_name: $last_name, first_name: $first_name}
+  ) {
+    email_address
+    first_name
+    last_name
+  }
+}
+    `;
+export type CreateCustomerMutationFn = Apollo.MutationFunction<CreateCustomerMutation, CreateCustomerMutationVariables>;
+
+/**
+ * __useCreateCustomerMutation__
+ *
+ * To run a mutation, you first call `useCreateCustomerMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateCustomerMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createCustomerMutation, { data, loading, error }] = useCreateCustomerMutation({
+ *   variables: {
+ *      customer_id: // value for 'customer_id'
+ *      email_address: // value for 'email_address'
+ *      last_name: // value for 'last_name'
+ *      first_name: // value for 'first_name'
+ *   },
+ * });
+ */
+export function useCreateCustomerMutation(baseOptions?: Apollo.MutationHookOptions<CreateCustomerMutation, CreateCustomerMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateCustomerMutation, CreateCustomerMutationVariables>(CreateCustomerDocument, options);
+      }
+export type CreateCustomerMutationHookResult = ReturnType<typeof useCreateCustomerMutation>;
+export type CreateCustomerMutationResult = Apollo.MutationResult<CreateCustomerMutation>;
+export type CreateCustomerMutationOptions = Apollo.BaseMutationOptions<CreateCustomerMutation, CreateCustomerMutationVariables>;
+export const DeleteCustomerByPkDocument: any = gql`
+    mutation DeleteCustomerByPK($customer_id: String!) {
+  delete_customers_by_pk(customer_id: $customer_id) {
+    email_address
+    first_name
+    last_name
+  }
+}
+    `;
+export type DeleteCustomerByPkMutationFn = Apollo.MutationFunction<DeleteCustomerByPkMutation, DeleteCustomerByPkMutationVariables>;
+
+/**
+ * __useDeleteCustomerByPkMutation__
+ *
+ * To run a mutation, you first call `useDeleteCustomerByPkMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteCustomerByPkMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteCustomerByPkMutation, { data, loading, error }] = useDeleteCustomerByPkMutation({
+ *   variables: {
+ *      customer_id: // value for 'customer_id'
+ *   },
+ * });
+ */
+export function useDeleteCustomerByPkMutation(baseOptions?: Apollo.MutationHookOptions<DeleteCustomerByPkMutation, DeleteCustomerByPkMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<DeleteCustomerByPkMutation, DeleteCustomerByPkMutationVariables>(DeleteCustomerByPkDocument, options);
+      }
+export type DeleteCustomerByPkMutationHookResult = ReturnType<typeof useDeleteCustomerByPkMutation>;
+export type DeleteCustomerByPkMutationResult = Apollo.MutationResult<DeleteCustomerByPkMutation>;
+export type DeleteCustomerByPkMutationOptions = Apollo.BaseMutationOptions<DeleteCustomerByPkMutation, DeleteCustomerByPkMutationVariables>;
+export const GetCustomersLikeNameDocument: any = gql`
+    query GetCustomersLikeName($limit: Int, $first_name_term: String) {
+  customers(limit: $limit, where: {first_name: {_like: $first_name_term}}) {
+    email_address
+    first_name
+    last_name
+  }
+}
+    `;
+
+/**
+ * __useGetCustomersLikeNameQuery__
+ *
+ * To run a query within a React component, call `useGetCustomersLikeNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetCustomersLikeNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetCustomersLikeNameQuery({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      first_name_term: // value for 'first_name_term'
+ *   },
+ * });
+ */
+export function useGetCustomersLikeNameQuery(baseOptions?: Apollo.QueryHookOptions<GetCustomersLikeNameQuery, GetCustomersLikeNameQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetCustomersLikeNameQuery, GetCustomersLikeNameQueryVariables>(GetCustomersLikeNameDocument, options);
+      }
+export function useGetCustomersLikeNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetCustomersLikeNameQuery, GetCustomersLikeNameQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetCustomersLikeNameQuery, GetCustomersLikeNameQueryVariables>(GetCustomersLikeNameDocument, options);
+        }
+export type GetCustomersLikeNameQueryHookResult = ReturnType<typeof useGetCustomersLikeNameQuery>;
+export type GetCustomersLikeNameLazyQueryHookResult = ReturnType<typeof useGetCustomersLikeNameLazyQuery>;
+export type GetCustomersLikeNameQueryResult = Apollo.QueryResult<GetCustomersLikeNameQuery, GetCustomersLikeNameQueryVariables>;
