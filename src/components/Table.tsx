@@ -1,14 +1,11 @@
-import { useGetCustomersLikeNameQuery } from '../generated/graphql';
+import { GetCustomersLikeNameQuery } from '../generated/graphql';
 
 const Headers = ["email_address", "first_name", "last_name"] as const;
 type HeadersTuple = typeof Headers;
 type Header = HeadersTuple[number]
 
-export const Table = () => {
-  const { data } = useGetCustomersLikeNameQuery({
-    fetchPolicy: 'network-only',
-    variables: { limit: 19, first_name_term: "Le%" }
-  });
+export const Table = ({ data }: { data: GetCustomersLikeNameQuery | undefined }) => {
+
   const headers: Header[] = data?.customers[0] ? Object.keys(data.customers[0]) as Header[] : [];
   return (
     <div className='tableContainer' style={{ color: 'black' }}>

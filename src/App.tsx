@@ -1,7 +1,7 @@
 
 import { ApolloProvider, ApolloClient, InMemoryCache, HttpLink } from "@apollo/client";
-import { Display } from "./components/Display";
-
+import { lazy, Suspense } from "react";
+const Display = lazy(() => import("./components/Display"))
 const client = new ApolloClient({
   cache: new InMemoryCache(),
   link: new HttpLink({
@@ -13,7 +13,9 @@ function App() {
   return (
     <div className="App">
       <ApolloProvider client={client}>
+        <Suspense fallback={<>Loading...</>} >
           <Display />
+        </Suspense>
       </ApolloProvider>
     </div>
   );

@@ -1,8 +1,8 @@
-import { lazy, Suspense } from 'react'
+import { useEffect } from 'react';
 import '../App.css';
-import { useCreateCustomerMutation, useDeleteCustomerByPkMutation } from '../generated/graphql';
+import { useCreateCustomerMutation, useDeleteCustomerByPkMutation, useGetCustomersLikeNameLazyQuery } from '../generated/graphql';
 import { CallbackButton } from './CallbackButton';
-const LazyTable = lazy(() => import('./Table'))
+import { Table } from './Table';
 
 export type ContextType = {
   data: {
@@ -13,12 +13,17 @@ export type ContextType = {
 }
 
 export const Display = () => {
+  const [getCustomers, { data, loading }] = useGetCustomersLikeNameLazyQuery({
+    fetchPolicy: 'network-only',
+    variables: { limit: 19, first_name_term: "Le%" },
+  });
   const [deleteCustomerByPkMutation] = useDeleteCustomerByPkMutation({
     fetchPolicy: 'network-only',
-    
+    onCompleted: () => getCustomers()
   })
   const [createCustomerMutation] = useCreateCustomerMutation({
     fetchPolicy: "network-only",
+    onCompleted: () => getCustomers()
   })
   const onAdd = () => {
     createCustomerMutation({
@@ -30,19 +35,24 @@ export const Display = () => {
       }
     })
   }
-
   const onRemove = () => {
     deleteCustomerByPkMutation({ variables: { customer_id: "this-is-a-customerId" } })
   }
+
+  useEffect(() => {
+    // init
+    if (!data && !loading) {
+      getCustomers()
+    }
+  }, [data, getCustomers, loading])
 
   return (
     <>
       <CallbackButton callback={onAdd} text="Add"></CallbackButton>
       <CallbackButton callback={onRemove} text="remove"></CallbackButton>
-      <Suspense fallback={<>Loading...</>} >
-        <LazyTable />
-      </Suspense>
-
+      <Table data={data} />
     </>
   )
 }
+
+export default Display;
