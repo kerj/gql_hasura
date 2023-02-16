@@ -2234,8 +2234,16 @@ export type GetCustomersLikeNameQueryVariables = Exact<{
 
 export type GetCustomersLikeNameQuery = { __typename?: 'query_root', customers: Array<{ __typename?: 'customers', email_address?: string | null, first_name?: string | null, last_name?: string | null }> };
 
+export type SubGetCustomersLikeNameSubscriptionVariables = Exact<{
+  limit?: InputMaybe<Scalars['Int']>;
+  fn_like?: InputMaybe<Scalars['String']>;
+}>;
 
-export const CreateCustomerDocument: any = gql`
+
+export type SubGetCustomersLikeNameSubscription = { __typename?: 'subscription_root', customers: Array<{ __typename?: 'customers', email_address?: string | null, first_name?: string | null, last_name?: string | null }> };
+
+
+export const CreateCustomerDocument = gql`
     mutation CreateCustomer($customer_id: String, $email_address: String, $last_name: String, $first_name: String) {
   insert_customers_one(
     object: {email_address: $email_address, customer_id: $customer_id, last_name: $last_name, first_name: $first_name}
@@ -2275,7 +2283,7 @@ export function useCreateCustomerMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateCustomerMutationHookResult = ReturnType<typeof useCreateCustomerMutation>;
 export type CreateCustomerMutationResult = Apollo.MutationResult<CreateCustomerMutation>;
 export type CreateCustomerMutationOptions = Apollo.BaseMutationOptions<CreateCustomerMutation, CreateCustomerMutationVariables>;
-export const DeleteCustomerByPkDocument: any = gql`
+export const DeleteCustomerByPkDocument = gql`
     mutation DeleteCustomerByPK($customer_id: String!) {
   delete_customers_by_pk(customer_id: $customer_id) {
     email_address
@@ -2310,7 +2318,7 @@ export function useDeleteCustomerByPkMutation(baseOptions?: Apollo.MutationHookO
 export type DeleteCustomerByPkMutationHookResult = ReturnType<typeof useDeleteCustomerByPkMutation>;
 export type DeleteCustomerByPkMutationResult = Apollo.MutationResult<DeleteCustomerByPkMutation>;
 export type DeleteCustomerByPkMutationOptions = Apollo.BaseMutationOptions<DeleteCustomerByPkMutation, DeleteCustomerByPkMutationVariables>;
-export const GetCustomersLikeNameDocument: any = gql`
+export const GetCustomersLikeNameDocument = gql`
     query GetCustomersLikeName($limit: Int, $first_name_term: String) {
   customers(limit: $limit, where: {first_name: {_like: $first_name_term}}) {
     email_address
@@ -2348,3 +2356,36 @@ export function useGetCustomersLikeNameLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type GetCustomersLikeNameQueryHookResult = ReturnType<typeof useGetCustomersLikeNameQuery>;
 export type GetCustomersLikeNameLazyQueryHookResult = ReturnType<typeof useGetCustomersLikeNameLazyQuery>;
 export type GetCustomersLikeNameQueryResult = Apollo.QueryResult<GetCustomersLikeNameQuery, GetCustomersLikeNameQueryVariables>;
+export const SubGetCustomersLikeNameDocument = gql`
+    subscription SubGetCustomersLikeName($limit: Int, $fn_like: String) {
+  customers(limit: $limit, where: {first_name: {_like: $fn_like}}) {
+    email_address
+    first_name
+    last_name
+  }
+}
+    `;
+
+/**
+ * __useSubGetCustomersLikeNameSubscription__
+ *
+ * To run a query within a React component, call `useSubGetCustomersLikeNameSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useSubGetCustomersLikeNameSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useSubGetCustomersLikeNameSubscription({
+ *   variables: {
+ *      limit: // value for 'limit'
+ *      fn_like: // value for 'fn_like'
+ *   },
+ * });
+ */
+export function useSubGetCustomersLikeNameSubscription(baseOptions?: Apollo.SubscriptionHookOptions<SubGetCustomersLikeNameSubscription, SubGetCustomersLikeNameSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<SubGetCustomersLikeNameSubscription, SubGetCustomersLikeNameSubscriptionVariables>(SubGetCustomersLikeNameDocument, options);
+      }
+export type SubGetCustomersLikeNameSubscriptionHookResult = ReturnType<typeof useSubGetCustomersLikeNameSubscription>;
+export type SubGetCustomersLikeNameSubscriptionResult = Apollo.SubscriptionResult<SubGetCustomersLikeNameSubscription>;

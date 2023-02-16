@@ -19,6 +19,7 @@
     "@types/react-dom": "^18.0.0",
     "apollo": "^2.34.0",
     "axios": "^1.3.3",
+    "graphql-ws": "^5.11.3",
     "graphqurl": "^1.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
