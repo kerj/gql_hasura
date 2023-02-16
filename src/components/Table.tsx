@@ -1,10 +1,10 @@
-import { GetCustomersLikeNameQuery } from '../generated/graphql';
+import { SubGetCustomersLikeNameSubscription } from '../generated/graphql';
 
 const Headers = ["email_address", "first_name", "last_name"] as const;
 type HeadersTuple = typeof Headers;
 type Header = HeadersTuple[number]
 
-export const Table = ({ data }: { data: GetCustomersLikeNameQuery | undefined }) => {
+export const Table = ({ data }: { data: SubGetCustomersLikeNameSubscription | undefined }) => {
 
   const headers: Header[] = data?.customers[0] ? Object.keys(data.customers[0]) as Header[] : [];
   return (
