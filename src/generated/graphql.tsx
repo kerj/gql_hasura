@@ -2234,6 +2234,13 @@ export type GetCustomersLikeNameQueryVariables = Exact<{
 
 export type GetCustomersLikeNameQuery = { __typename?: 'query_root', customers: Array<{ __typename?: 'customers', email_address?: string | null, first_name?: string | null, last_name?: string | null }> };
 
+export type StreamCustomersByFnSubscriptionVariables = Exact<{
+  fn_ilike?: InputMaybe<Scalars['String']>;
+}>;
+
+
+export type StreamCustomersByFnSubscription = { __typename?: 'subscription_root', customers_stream: Array<{ __typename?: 'customers', email_address?: string | null, first_name?: string | null, last_name?: string | null }> };
+
 export type SubGetCustomersLikeNameSubscriptionVariables = Exact<{
   limit?: InputMaybe<Scalars['Int']>;
   fn_like?: InputMaybe<Scalars['String']>;
@@ -2356,6 +2363,42 @@ export function useGetCustomersLikeNameLazyQuery(baseOptions?: Apollo.LazyQueryH
 export type GetCustomersLikeNameQueryHookResult = ReturnType<typeof useGetCustomersLikeNameQuery>;
 export type GetCustomersLikeNameLazyQueryHookResult = ReturnType<typeof useGetCustomersLikeNameLazyQuery>;
 export type GetCustomersLikeNameQueryResult = Apollo.QueryResult<GetCustomersLikeNameQuery, GetCustomersLikeNameQueryVariables>;
+export const StreamCustomersByFnDocument = gql`
+    subscription StreamCustomersByFN($fn_ilike: String) {
+  customers_stream(
+    batch_size: 10
+    cursor: {initial_value: {first_name: ""}, ordering: ASC}
+    where: {first_name: {_ilike: $fn_ilike}}
+  ) {
+    email_address
+    first_name
+    last_name
+  }
+}
+    `;
+
+/**
+ * __useStreamCustomersByFnSubscription__
+ *
+ * To run a query within a React component, call `useStreamCustomersByFnSubscription` and pass it any options that fit your needs.
+ * When your component renders, `useStreamCustomersByFnSubscription` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the subscription, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useStreamCustomersByFnSubscription({
+ *   variables: {
+ *      fn_ilike: // value for 'fn_ilike'
+ *   },
+ * });
+ */
+export function useStreamCustomersByFnSubscription(baseOptions?: Apollo.SubscriptionHookOptions<StreamCustomersByFnSubscription, StreamCustomersByFnSubscriptionVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useSubscription<StreamCustomersByFnSubscription, StreamCustomersByFnSubscriptionVariables>(StreamCustomersByFnDocument, options);
+      }
+export type StreamCustomersByFnSubscriptionHookResult = ReturnType<typeof useStreamCustomersByFnSubscription>;
+export type StreamCustomersByFnSubscriptionResult = Apollo.SubscriptionResult<StreamCustomersByFnSubscription>;
 export const SubGetCustomersLikeNameDocument = gql`
     subscription SubGetCustomersLikeName($limit: Int, $fn_like: String) {
   customers(limit: $limit, where: {first_name: {_like: $fn_like}}) {

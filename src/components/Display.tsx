@@ -1,6 +1,7 @@
 import '../App.css';
 import { useCreateCustomerMutation, useDeleteCustomerByPkMutation, useSubGetCustomersLikeNameSubscription } from '../generated/graphql';
 import { CallbackButton } from './CallbackButton';
+import { Search } from './Search';
 import { Table } from './Table';
 
 export type ContextType = {
@@ -37,10 +38,18 @@ export const Display = () => {
 
   return (
     <>
-      <CallbackButton callback={onAdd} text="Add"></CallbackButton>
-      <CallbackButton callback={onRemove} text="remove"></CallbackButton>
-      { data &&
-        <Table data={data} />
+      {
+        false &&
+        <>
+          <CallbackButton callback={onAdd} text="Add"></CallbackButton>
+          <CallbackButton callback={onRemove} text="remove"></CallbackButton>
+          {data &&
+            <Table data={data} />
+          }
+        </>
+      }
+      {true &&
+        <Search />
       }
     </>
   )
