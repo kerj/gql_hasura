@@ -1,8 +1,9 @@
 import { useApolloClient } from '@apollo/client';
 import Link from 'next/link';
+import { Suspense } from 'react';
 import { GetCustomersLikeNameDocument, useCreateCustomerMutation, useDeleteCustomerByPkMutation, useGetCustomersLikeNameQuery } from '../generated/graphql';
 import { CallbackButton } from './CallbackButton';
-import { Table } from './Table';
+import Table from './Table';
 
 export type ContextType = {
   data: {
@@ -12,7 +13,7 @@ export type ContextType = {
   }
 }
 
-export const Display = () => {
+export const Display = ({ initData }: { initData?: any }) => {
   const client = useApolloClient()
 
   useGetCustomersLikeNameQuery({
@@ -60,9 +61,10 @@ export const Display = () => {
         <>
           <CallbackButton callback={onAdd} text="Add"></CallbackButton>
           <CallbackButton callback={onRemove} text="remove"></CallbackButton>
-          {customers &&
-            <Table data={customers} />
-          }
+          <Suspense>
+            <Table data={customers || initData} />
+
+          </Suspense>
           <Link
             href="/search/customer-search"
           >
