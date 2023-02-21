@@ -1,5 +1,4 @@
 import { useApolloClient } from '@apollo/client';
-import '../App.css';
 import { GetCustomersLikeNameDocument, useCreateCustomerMutation, useDeleteCustomerByPkMutation, useGetCustomersLikeNameQuery } from '../generated/graphql';
 import { CallbackButton } from './CallbackButton';
 import { Search } from './Search';

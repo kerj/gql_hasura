@@ -1,22 +1,22 @@
-
-import { ApolloProvider, ApolloClient, InMemoryCache, HttpLink, split } from "@apollo/client";
-import { createClient } from "graphql-ws";
-import { GraphQLWsLink } from '@apollo/client/link/subscriptions'
-import { lazy, Suspense } from "react";
-import { getMainDefinition } from "@apollo/client/utilities";
-const Display = lazy(() => import("./components/Display"))
+import React, { Suspense } from 'react'
+import Layout from '../components/Layout'
+import { Display } from '../components/Display'
+import { HttpLink, split, InMemoryCache, ApolloClient, ApolloProvider } from '@apollo/client';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { getMainDefinition } from '@apollo/client/utilities';
+import { createClient } from 'graphql-ws';
 
 const http = new HttpLink({
   uri: "http://localhost:8080/v1/graphql"
 })
-const ws = new GraphQLWsLink(createClient({
+const wsGql = typeof window !== "undefined" ? new GraphQLWsLink(createClient({
   url: "ws://localhost:8080/v1/graphql"
   // connectionParams: {
   //   authToken: auth
   // }
-}));
+})) : null;
 // allows subscriptions to use ws and others to use http
-const splitLink = split(
+const splitLink = typeof window !== "undefined" && wsGql !== null ? split(
   ({ query }) => {
     const definition = getMainDefinition(query);
     return (
@@ -24,9 +24,9 @@ const splitLink = split(
       definition.operation === "subscription"
     );
   },
-  ws,
+  wsGql,
   http
-)
+) : http
 
 const cache = new InMemoryCache({
   typePolicies: {
@@ -53,16 +53,16 @@ const client = new ApolloClient({
   link: splitLink,
 })
 
-function App() {
+const index = () => {
   return (
-    <div className="App">
-      <ApolloProvider client={client}>
-        <Suspense fallback={<>Loading...</>} >
-          <Display />
-        </Suspense>
-      </ApolloProvider>
-    </div>
-  );
+    <ApolloProvider client={client}>
+      <Suspense fallback={<>Loading...</>} >
+        <Layout home>
+          <Display></Display>
+        </Layout>
+      </Suspense>
+    </ApolloProvider>
+  )
 }
 
-export default App;
+export default index
