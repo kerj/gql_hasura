@@ -39,7 +39,6 @@ export const Search = () => {
       />
       {data &&
         <StreamTable data={poolData} />
-
       }
     </>
   )

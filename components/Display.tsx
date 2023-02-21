@@ -1,7 +1,7 @@
 import { useApolloClient } from '@apollo/client';
+import Link from 'next/link';
 import { GetCustomersLikeNameDocument, useCreateCustomerMutation, useDeleteCustomerByPkMutation, useGetCustomersLikeNameQuery } from '../generated/graphql';
 import { CallbackButton } from './CallbackButton';
-import { Search } from './Search';
 import { Table } from './Table';
 
 export type ContextType = {
@@ -63,10 +63,12 @@ export const Display = () => {
           {customers &&
             <Table data={customers} />
           }
+          <Link
+            href="/search/customer-search"
+          >
+            To Customer Search
+          </Link>
         </>
-      }
-      {true &&
-        <Search />
       }
     </>
   )
