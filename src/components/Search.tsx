@@ -31,8 +31,6 @@ export const Search = () => {
     setPoolData(p => [...p, ...(data ? data?.customers_stream : [])])
   }, [data, searchTerm])
 
-
-
   return (
     <>
       <input

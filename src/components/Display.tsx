@@ -1,5 +1,6 @@
+import { useApolloClient } from '@apollo/client';
 import '../App.css';
-import { useCreateCustomerMutation, useDeleteCustomerByPkMutation, useSubGetCustomersLikeNameSubscription } from '../generated/graphql';
+import { GetCustomersLikeNameDocument, useCreateCustomerMutation, useDeleteCustomerByPkMutation, useGetCustomersLikeNameQuery } from '../generated/graphql';
 import { CallbackButton } from './CallbackButton';
 import { Search } from './Search';
 import { Table } from './Table';
@@ -13,9 +14,17 @@ export type ContextType = {
 }
 
 export const Display = () => {
-  const { data } = useSubGetCustomersLikeNameSubscription({
-    variables: { limit: 19, fn_like: "Le%" },
+  const client = useApolloClient()
+
+  useGetCustomersLikeNameQuery({
+    variables: { limit: 19, first_name_term: "Le%" },
   })
+  // reads from cache for this query
+  const customers = client.readQuery({
+    query: GetCustomersLikeNameDocument,
+    variables: { limit: 19, first_name_term: "Le%" }
+  })
+
   const [deleteCustomerByPkMutation] = useDeleteCustomerByPkMutation({
     fetchPolicy: 'network-only',
   })
@@ -29,22 +38,31 @@ export const Display = () => {
         email_address: "test@test.com",
         last_name: "James",
         first_name: "LeBron"
-      }
+      },
+      refetchQueries: [{ query: GetCustomersLikeNameDocument, variables: { limit: 19, first_name_term: "Le%" } }]
     })
   }
   const onRemove = () => {
-    deleteCustomerByPkMutation({ variables: { customer_id: "this-is-a-customerId" } })
+    deleteCustomerByPkMutation({
+      variables: {
+        customer_id: "this-is-a-customerId"
+      },
+      refetchQueries: [{
+        query: GetCustomersLikeNameDocument,
+        variables: { limit: 19, first_name_term: "Le%" }
+      }]
+    })
   }
 
   return (
     <>
       {
-        false &&
+        true &&
         <>
           <CallbackButton callback={onAdd} text="Add"></CallbackButton>
           <CallbackButton callback={onRemove} text="remove"></CallbackButton>
-          {data &&
-            <Table data={data} />
+          {customers &&
+            <Table data={customers} />
           }
         </>
       }

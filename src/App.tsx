@@ -28,8 +28,28 @@ const splitLink = split(
   http
 )
 
+const cache = new InMemoryCache({
+  typePolicies: {
+    Subscription: {
+      fields: {
+        customers_stream: {
+          read(value) {
+            console.log(value)
+            return value?.email_address?.toUpperCase()
+          },
+          merge(ex, incoming) {
+            const existing = ex || []
+            console.log(ex, incoming)
+            return [...existing, ...incoming]
+          }
+        }
+      }
+    }
+  }
+})
+
 const client = new ApolloClient({
-  cache: new InMemoryCache(),
+  cache,
   link: splitLink,
 })
 
