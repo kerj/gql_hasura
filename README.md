@@ -1,6 +1,43 @@
-# Getting Started with Create React App
+# A flexible Data table and Data Context provider
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A fun way to external data to your react tree!
+
+Wrap your components with the DataProvider component and provide type safety at the same time!
+```
+ <div className="App">
+      <DataProvider<ContextType> requestMetas={{
+        url: "Some endpoint",
+        options: {
+          method: "post",
+          data: JSON.stringify({
+            query: `
+              query GetCustomers {
+                customers(limit: 19, where: {first_name: {_like: "Le%"}}) {
+                  email_address
+                  first_name
+                  last_name
+                }
+              }
+            `,
+            operationName: "GetCustomers"
+          })
+        }
+      }}>
+        <Display />
+      </DataProvider>
+```
+
+The data Provider uses the requestMetas provided: 
+
+```
+   const result = await axios(requestMetas.url, { ...requestMetas.options, signal }).then(res => {
+        return res.data
+      });
+```
+
+DataProvider exposes a `setStale` method that will allow components in the tree to let the context know
+that the data it is providing is stale and should refetch! 
+
 
 ## Available Scripts
 
