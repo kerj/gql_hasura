@@ -1,6 +1,109 @@
-# A flexible Data table and Data Context provider
+# gql_hasura
 
-A fun way to external data to your react tree!
+This repository provides a streamlined setup for integrating GraphQL with Hasura to build modern, real-time applications. The project focuses on efficient data management, automatic GraphQL schema generation, and real-time updates, leveraging Hasura's powerful features.
+
+## Features
+
+- **Instant GraphQL API**: Automatically generates a fully-functional GraphQL API over your database.
+- **Real-Time Subscriptions**: Enables live updates as data changes.
+- **Flexible Configuration**: Easily customize to suit your project's requirements.
+- **Built for Developers**: Simplifies the setup of GraphQL APIs with minimal boilerplate.
+
+## Prerequisites
+
+Before setting up this project, ensure the following tools are installed:
+
+- [Docker](https://www.docker.com/get-started)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- [Node.js](https://nodejs.org/) (optional for additional custom scripts)
+
+## Getting Started
+
+Follow these steps to set up and run the project:
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/kerj/gql_hasura.git
+cd gql_hasura
+```
+
+### 2. Set Up Environment Variables
+
+Create a `.env` file in the root directory with the following content:
+
+```env
+HASURA_GRAPHQL_DATABASE_URL=postgres://username:password@host:port/database
+HASURA_GRAPHQL_ADMIN_SECRET=your_admin_secret
+HASURA_GRAPHQL_ENABLE_CONSOLE=true
+HASURA_GRAPHQL_DEV_MODE=true
+```
+
+Replace the placeholder values with your actual database credentials and desired admin secret.
+
+### 3. Start the Hasura and PostgreSQL Containers
+
+Use Docker Compose to start the Hasura and PostgreSQL containers:
+
+```bash
+docker-compose up -d
+```
+
+This will start both the Hasura GraphQL Engine and the PostgreSQL database.
+
+### 4. Access the Hasura Console
+
+Once the containers are running, you can access the Hasura Console by navigating to:
+
+```
+http://localhost:8080
+```
+
+Log in using the `HASURA_GRAPHQL_ADMIN_SECRET` you set in the `.env` file.
+
+### 5. Apply Migrations (Optional)
+
+If your project includes database migrations, apply them using the Hasura CLI:
+
+```bash
+hasura migrate apply
+hasura metadata apply
+```
+
+### 6. Explore the GraphQL API
+
+Start building and testing your queries, mutations, and subscriptions using the GraphQL API endpoint:
+
+```
+http://localhost:8080/v1/graphql
+```
+
+## Troubleshooting
+
+- **Docker Issues**: Ensure Docker and Docker Compose are properly installed and running.
+- **Environment Variables**: Double-check your `.env` file for any errors in database credentials or admin secret.
+- **Access Issues**: Verify that port `8080` is open and not blocked by a firewall.
+
+## Contributing
+
+Contributions are welcome! If you'd like to improve this repository, please:
+
+1. Fork the repository.
+2. Create a feature branch (`git checkout -b feature-name`).
+3. Commit your changes (`git commit -m 'Add feature'`).
+4. Push to the branch (`git push origin feature-name`).
+5. Open a Pull Request.
+
+## License
+
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
+
+---
+
+Happy coding!
+
+
+# A flexible Data table and Data Context provider
 
 Wrap your components with the DataProvider component and provide type safety at the same time!
 ```
@@ -37,47 +140,3 @@ The data Provider uses the requestMetas provided:
 
 DataProvider exposes a `setStale` method that will allow components in the tree to let the context know
 that the data it is providing is stale and should refetch! 
-
-
-## Available Scripts
-
-In the project directory, you can run:
-
-### `yarn start`
-
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
-
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
-
-### `yarn test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `yarn build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `yarn eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
